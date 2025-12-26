@@ -1,0 +1,500 @@
+/* =====================
+   GLOBAL RESET & THEME VARIABLES
+===================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 1. DEFAULT (DARK MODE) */
+:root {
+  --bg-main: #0e0e0e;
+  --bg-panel: #151515;
+  --bg-input: #1e1e1e;
+  --bg-hover: #2a2a2a;
+  --bg-active: #333333; /* New active state color */
+  --border: rgba(255, 255, 255, 0.08);
+  --text-main: #e5e7eb;
+  --text-muted: #9ca3af;
+  --icon-gray: #9ca3af;
+  --msg-user-bg: #2563eb;
+  --msg-bot-bg: transparent;
+  
+  --sidebar-width: 260px; 
+  --sidebar-collapsed: 72px; 
+}
+
+/* 2. LIGHT MODE OVERRIDES */
+[data-theme="light"] {
+  --bg-main: #ffffff;
+  --bg-panel: #f0f4f9;
+  --bg-input: #f0f4f9;
+  --bg-hover: #e2e8f0;
+  --bg-active: #dbeafe; /* Light blue for active chat */
+  --border: #e5e7eb;
+  --text-main: #1f2937;
+  --text-muted: #64748b;
+  --icon-gray: #4b5563;
+  --msg-user-bg: #000000;
+  --msg-bot-bg: #f3f4f6;
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* =====================
+   APP LAYOUT
+===================== */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* =====================
+   SIDEBAR
+===================== */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+  overflow: hidden;
+}
+
+.sidebar.collapsed {
+  width: var(--sidebar-collapsed);
+}
+
+.sidebar-header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+  padding: 0;
+}
+
+/* Sidebar Buttons */
+.icon-btn, 
+.mobile-menu-btn {
+  background: transparent;
+  border: none;
+  color: var(--icon-gray);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover,
+.mobile-menu-btn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-main);
+}
+
+/* New Chat Button */
+.new-chat-btn {
+  margin: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-hover); 
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  border-radius: 20px; /* More rounded like Gemini */
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.new-chat-btn:hover {
+  background: var(--bg-active);
+  color: var(--text-main);
+}
+
+.sidebar.collapsed .new-chat-btn {
+  width: 40px; 
+  height: 40px;
+  margin: 12px auto;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* --- HISTORY LIST STYLING (IMPROVED) --- */
+.history-list {
+  flex: 1;
+  padding: 10px 12px;
+  overflow-y: auto;
+  /* Scrollbar styling for webkit browsers */
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-hover) transparent;
+}
+
+.history-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin: 10px 10px 5px 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* The Chat Item Row */
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 2px;
+  border-radius: 20px; /* Soft round edges */
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 14px;
+  transition: all 0.2s ease;
+  height: 44px;
+  position: relative; /* For delete button positioning */
+}
+
+/* Text Truncation (The "..." effect) */
+.history-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Hover State */
+.history-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-main);
+}
+
+/* Active State (The chat you are currently in) */
+.history-item.active {
+    background: var(--bg-active);
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+/* Delete Button (Subtle) */
+.delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.2s;
+    padding: 4px;
+    border-radius: 50%;
+}
+
+.delete-btn:hover {
+    color: #ef4444; /* Red on hover */
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Show delete button only when hovering the row */
+.history-item:hover .delete-btn {
+    opacity: 1;
+}
+
+/* Collapsed Sidebar Adjustments */
+.sidebar.collapsed .history-item {
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 4px auto;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.sidebar.collapsed .history-text,
+.sidebar.collapsed .delete-btn,
+.sidebar.collapsed .history-title {
+    display: none; /* Hide text in collapsed mode */
+}
+
+/* --- FOOTER --- */
+.sidebar-footer {
+  padding: 12px;
+  margin-top: auto;
+}
+
+.sidebar.collapsed .sidebar-footer {
+  display: flex;
+  justify-content: center;
+  padding: 15px 0;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+.theme-toggle:hover {
+    background: var(--bg-hover);
+    color: var(--text-main);
+}
+
+/* SVG Sizing */
+svg {
+  width: 20px;
+  height: 20px;
+} 
+.sidebar.collapsed svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* =====================
+   MAIN CONTENT
+===================== */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-main);
+  transition: background 0.3s ease;
+}
+
+.top-nav {
+  height: 60px;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-wrapper {
+    position: relative;
+    cursor: pointer;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.profile-menu {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    padding: 15px;
+    border-radius: 12px;
+    width: 200px;
+    z-index: 100;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.menu-item {
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    width: 100%;
+    padding: 8px 0;
+    font-size: 14px;
+}
+.menu-item:hover {
+    color: #ef4444;
+}
+
+/* =====================
+   CHAT AREA
+===================== */
+.chat-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  scroll-behavior: smooth;
+}
+
+.message {
+    width: 100%;
+    max-width: 768px; /* Standard readable width */
+    margin-bottom: 24px;
+    display: flex;
+    gap: 16px;
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.bot-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--icon-gray);
+    flex-shrink: 0;
+}
+
+.msg-bubble {
+    padding: 0;
+    background: transparent;
+    line-height: 1.6;
+    color: var(--text-main);
+    font-size: 15px;
+    overflow-x: hidden;
+}
+
+.message.user .msg-bubble {
+    background: var(--msg-user-bg);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 18px;
+    border-bottom-right-radius: 4px;
+}
+
+/* Markdown Styling inside bubbles */
+.msg-bubble p { margin-bottom: 10px; }
+.msg-bubble code { background: rgba(0,0,0,0.2); padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+.msg-bubble pre { background: #1e1e1e; padding: 10px; border-radius: 8px; overflow-x: auto; margin: 10px 0; }
+
+.welcome-message {
+    text-align: center;
+    margin-top: 10vh;
+}
+.welcome-message h1 {
+  font-size: 48px;
+  font-weight: 600;
+  background: linear-gradient(90deg, #4285f4, #d96570);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+}
+.welcome-message p { color: var(--text-muted); }
+
+/* =====================
+   INPUT AREA
+===================== */
+.input-area {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  background: var(--bg-main); /* Covers content behind it */
+}
+
+.input-wrapper {
+  width: 100%;
+  max-width: 768px;
+  background: var(--bg-input);
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  gap: 12px;
+  transition: border-color 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.input-wrapper:focus-within {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--bg-hover);
+}
+
+.gemini-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-main);
+  font-size: 16px;
+  padding: 8px 0;
+}
+
+.gemini-right-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gemini-icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--icon-gray);
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.gemini-icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1); 
+    color: var(--text-main);           
+}
+
+.mic-active {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    color: #ef4444 !important;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
